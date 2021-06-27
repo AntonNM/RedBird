@@ -26,7 +26,9 @@ using namespace std;
 	node::node(board* last, pathVector path){
 		short int start[2]= {path.start.x, path.start.y};
 		short int end[2] = {path.move.x+path.start.x, path.move.y+path.start.y};
-		this->current.set_board(*new board(last, start, end));
+		board* x = new board(last, start, end);
+		this->current.set_board(*x);
+		delete x;
 	};
 
 	node::~node(){
@@ -36,14 +38,15 @@ using namespace std;
 
 	pathVector node::getBestMove(int depth){
 
+
 		this->getChildren();
 
-		print();
+		//print();
 
 		node* evaluating = new node(&this->current, this->children[0]);
 		pathVector bestMove = this->children[0];
 		int minmax = evaluating->getChildrenEvaluation(depth-1);
-
+		delete evaluating;
 
 
 				for(pathVector move : this->children){
@@ -76,7 +79,7 @@ using namespace std;
 
 		if(depth){
 			this->getChildren();
-			print();
+			//print();
 			return this->minimax( depth);
 		}
 		else{
@@ -84,6 +87,58 @@ using namespace std;
 		}
 	};
 
+
+	int node::minimax(int depth){
+
+		moveVector position = {0,0};
+		int pointerIndex;
+
+		node *evaluating ;
+		int minmax ;
+
+		pathVector nextMove = this->current.getNextPathVector(&position, &pointerIndex);
+
+		if(!nextMove.isEmpty()){
+			evaluating = new node(&this->current, nextMove);
+			minmax = evaluating->getChildrenEvaluation(depth-1);
+			delete evaluating;
+		}
+
+		while(!nextMove.isEmpty()){
+
+
+
+			node *evaluating = new node(&this->current, nextMove);
+			int eval = evaluating->getChildrenEvaluation(depth-1);
+
+			if(this->current.turn){
+				if(minmax < eval){
+					minmax=eval;
+				}
+			}
+			else{
+				if(minmax > eval){
+					minmax = eval;
+				}
+			}
+			delete evaluating;
+			nextMove = this->current.getNextPathVector(&position, &pointerIndex);
+
+		}
+
+
+
+
+
+
+		return 0;//minmax;
+	};
+
+
+
+
+
+/*
 	int node::minimax(int depth){
 
 		node* evaluating = new node(&this->current, this->children[0]);
@@ -109,6 +164,9 @@ using namespace std;
 
 		return minmax;//minmax;
 	};
+*/
+
+
 
 	void node::getChildren(){ // a vector of evaluations from children
 
@@ -120,10 +178,10 @@ using namespace std;
 	void node::print(){
 		this->current.print();
 
-		/*for(pathVector path : this->children){
+		for(pathVector path : this->children){
 			path.print();
 		cout<<"\n";
-		}*/
+		}
 
 
 

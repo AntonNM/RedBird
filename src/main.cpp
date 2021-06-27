@@ -28,7 +28,7 @@ class engine {
 
 	node currentBoard;
 
-
+	vector<pathVector> evaluatingPath;
 
 
 };
@@ -48,7 +48,7 @@ int main(){
 
 	node *gameNode = new node(*start);
 
-	pathVector bestMove = gameNode->getBestMove(6);
+	pathVector bestMove = gameNode->getBestMove(5);
 
 	bestMove.print();
 

@@ -11,19 +11,6 @@
 using namespace std;
 
 
-
-//
-//class board {
-//private:
-//
-//	piece position[8][8];
-//	bool turn;
-//	int evaluation;
-//
-//public:
-	// Default constructor for the initial board position
-
-
 	board::board(){
 
 		char Intial_Position_Ids[8][8] = {'r', 'k', 'b', 'Q', 'K', 'b', 'k', 'r',
@@ -34,7 +21,7 @@ using namespace std;
 										  'e', 'e', 'e', 'e', 'e', 'e', 'e', 'e',
 										  'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p',
 										  'r', 'k', 'b', 'Q', 'K', 'b', 'k', 'r'};
-		//Sets Piece Ids in Board.Position
+
 		for(int i=0; i<8;++i){
 			for (int o=0;o<8;++o){
 				position[i][o].set_Piece_Id(Intial_Position_Ids[i][o]);
@@ -141,6 +128,47 @@ using namespace std;
 				}
 			}
 		}
+
+	}
+
+	pathVector board::getNextPathVector(moveVector *boardPosition, int* pointerPosition){
+
+		pathVector result={{0,0},{0,0}};
+		int y=boardPosition->y;
+		int x=boardPosition->x;
+		int z = *pointerPosition;
+
+		for(; y<8; y++){
+			for(; x <8;x++){
+				if (!position[y][x].is_empty() && position[y][x].get_piece_side()==turn){}
+
+					moveVector *moves = &position[y][x].get_moveVectors();
+					int movesLength = position[y][x].get_movement_vector_length();
+
+					for(;z<movesLength;z++){
+
+						moveVector *move = moves+z;
+
+						short int start[2]= {x, y};
+						short int end[2]={x+move->x, y+move->y};
+
+						if(validMove(this, start , end)){
+							*boardPosition={x, y};
+							*pointerPosition = ++z;
+							result = {*boardPosition, *move};
+							return result;
+						}
+					}
+					z=0;
+			}
+				x=0;
+		}
+
+			y=0;
+		 ///////////////////
+		///////////////////
+
+		return result;
 
 	}
 

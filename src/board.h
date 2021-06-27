@@ -39,6 +39,9 @@ class board
 		void evaluate();
 		bool is_check();
 		void nextPositions(vector<pathVector>* children);
+
+		pathVector getNextPathVector(moveVector *boardPosition, int* pointerPosition);
+
 		bool validMove(board* current, short int start[2], short int end[2]);
 
 

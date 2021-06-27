@@ -47,6 +47,11 @@ public:
 		this->start.print();
 		this->move.print();
 	}
+
+	bool isEmpty(){
+
+		return  (this->move.x==0) and (this->move.y==0);
+	}
 	/*int evaluation;
 
 	bool operator==(pathVector b){
