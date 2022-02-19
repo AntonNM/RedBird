@@ -1,5 +1,8 @@
-src/piece.o: ../src/piece.cpp ../src/piece.h ../src/moveVector.h
+src/Piece.o: ../src/Piece.cpp ../src/Piece.h ../src/PositionVector.h \
+ ../src/MovementVector.h
 
-../src/piece.h:
+../src/Piece.h:
 
-../src/moveVector.h:
+../src/PositionVector.h:
+
+../src/MovementVector.h:

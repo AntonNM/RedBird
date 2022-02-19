@@ -1,12 +1,14 @@
-src/node.o: ../src/node.cpp ../src/board.h ../src/piece.h \
- ../src/moveVector.h ../src/pathVector.h ../src/node.h
+src/node.o: ../src/node.cpp ../src/board.h ../src/PositionVector.h \
+ ../src/pathVector.h ../src/Piece.h ../src/MovementVector.h ../src/node.h
 
 ../src/board.h:
 
-../src/piece.h:
-
-../src/moveVector.h:
+../src/PositionVector.h:
 
 ../src/pathVector.h:
+
+../src/Piece.h:
+
+../src/MovementVector.h:
 
 ../src/node.h:

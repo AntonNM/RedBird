@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <vector>
 
-#include "moveVector.h"
+#include "PositionVector.h"
 
 
 using namespace std;
@@ -12,9 +12,12 @@ using namespace std;
 
 
 
-	void moveVector::print(){
+	void PositionVector::print(){
 		cout<< "(y, x)=("<<y<<','<<x<<")\n";
 	};
+
+
+
 
 
 

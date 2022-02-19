@@ -11,172 +11,158 @@
 #include <algorithm>
 
 #include "board.h"
-#include "piece.h"
-#include "moveVector.h"
 #include "pathVector.h"
 #include "node.h"
 
+#include "Piece.h"
+#include "PositionVector.h"
+
 using namespace std;
 
+//Should implement tree traversal, with perhaps hashmap of pathvetor from current board for transpositions
+//alpha beta pruning and progressive deepening
 
-	node::node(board current){
+
+	node::node(board* current){
 		this->current=current;
 	};
 
-	node::node(board* last, pathVector path){
-		short int start[2]= {path.start.x, path.start.y};
-		short int end[2] = {path.move.x+path.start.x, path.move.y+path.start.y};
-		board* x = new board(last, start, end);
-		this->current.set_board(*x);
-		delete x;
+	node::node(board* last, pathVector* path){
+		/*int start[2]= {path.start.x, path.start.y};
+		int end[2] = {path.move.x+path.start.x, path.move.y+path.start.y};*/
+		this->current=new board(last, path);
+		//delete x;
 	};
 
 	node::~node(){
 
-		this->children.clear();
+
+		delete this->current;
 	};
 
-	pathVector node::getBestMove(int depth){
 
 
-		this->getChildren();
+	childVector node::minimax(int depth, int *numBoards){
 
-		//print();
-
-		node* evaluating = new node(&this->current, this->children[0]);
-		pathVector bestMove = this->children[0];
-		int minmax = evaluating->getChildrenEvaluation(depth-1);
-		delete evaluating;
+		if(depth>0){
 
 
-				for(pathVector move : this->children){
+			childVector bestMove={pathVector{}, int{}, depth};
+			bool first=true;
+			//this->getChildren();
+			//this->current->print();
+			this->current->nextPositions(&this->children);
+			if(this->children.size()>0){
+			for(pathVector move:this->children){
 
-					evaluating = new node(&this->current, move);
+				//std::cout<<"something";
+				//board* child = new board(this->current, &move);
+				//child->print();
+				node* child= new node(this->current, &move);
+				(*numBoards)++;
+				childVector childEvaluation = child->minimax(depth-1, numBoards);
+				//move.print();
+				// child->current->print();
+				//std::cout<<"childEval"<<childEvaluation.childEval;
 
-					int eval = evaluating->getChildrenEvaluation(depth-1);
+			/*	if(childEvaluation.Checkmate){
+					bestMove.print();
+					childEvaluation.print();
+					move.print();
+				}
+*/
+				if(first){ // first move
+					// asign current move to stats of childVector
+					//bestMove={move,childEvaluation.childEval};
+					bestMove={move, childEvaluation}; // checkmate instructor, bool side may be inaccurate? for none mates?
+					first=false;
 
-					if(this->current.turn){
-						if(minmax < eval){
-							minmax=eval;
-							bestMove=move;
+
+				}
+
+				else if ((this->current->turn)?childEvaluation>bestMove:bestMove>childEvaluation){
+
+					bestMove={move, childEvaluation};
+
+				}
+
+		/*		else if(childEvaluation.Checkmate){
+
+					if(childEvaluation.side==this->current->turn){
+						bestMove={move, childEvaluation};
+						break;
+					}
+
+				}
+				else if(childEvaluation.StaleMate){
+
+						if(childEvaluation.side==this->current->turn){
+							if(!bestMove.Checkmate && ((this->current->turn)? bestMove.childEval<0:bestMove.childEval>0)){ //if best move is not checkmate and the evaluation is losing
+								bestMove={move, childEvaluation};
+							}
+						}
+				}
+
+
+
+
+
+				else if(!bestMove.Checkmate){// && !bestMove.StaleMate){ // when to compare non mate child with Best move
+					//staleMate is replace with evaluation fo 1 or greater
+					if(bestMove.StaleMate){
+						if((this->current->turn)? childEvaluation.childEval<0:childEvaluation.childEval>0){
+							bestMove={move,childEvaluation};
 						}
 					}
-					else{
-						if(minmax > eval){
-							minmax = eval;
-							bestMove=move;
-						}
+					else if((this->current->turn)? childEvaluation.childEval>bestMove.childEval : childEvaluation.childEval<bestMove.childEval){
+						bestMove={move,childEvaluation.childEval};
 					}
 				}
 
-			delete evaluating;
+*/			delete child;
+			child=nullptr;
+			}
 
-				return bestMove;
 
+			return bestMove;
+
+			}
+
+
+			else{ // no valid moves
+				if( this->current->isCheck()){
+					//return checkmate
+					//this->current->print();
+					return childVector{true,false, (this->current->turn)};
+
+				}
+				else{
+					//return stalemate
+					return childVector{false,true, (this->current->turn)};
+				}
+			}
+		}
+
+		else{ // depth==0
+			//std::cout<<"board eval" <<this->current->evaluation;
+			return childVector{pathVector{},int{this->current->evaluation}, depth};
+
+		}
 	}
 
-	int node::getChildrenEvaluation(int depth){
 
-		if(depth){
-			this->getChildren();
-			//print();
-			return this->minimax( depth);
-		}
-		else{
-			return this->current.evaluation;
-		}
-	};
-
-
-	int node::minimax(int depth){
-
-		moveVector position = {0,0};
-		int pointerIndex;
-
-		node *evaluating ;
-		int minmax ;
-
-		pathVector nextMove = this->current.getNextPathVector(&position, &pointerIndex);
-
-		if(!nextMove.isEmpty()){
-			evaluating = new node(&this->current, nextMove);
-			minmax = evaluating->getChildrenEvaluation(depth-1);
-			delete evaluating;
-		}
-
-		while(!nextMove.isEmpty()){
-
-
-
-			node *evaluating = new node(&this->current, nextMove);
-			int eval = evaluating->getChildrenEvaluation(depth-1);
-
-			if(this->current.turn){
-				if(minmax < eval){
-					minmax=eval;
-				}
-			}
-			else{
-				if(minmax > eval){
-					minmax = eval;
-				}
-			}
-			delete evaluating;
-			nextMove = this->current.getNextPathVector(&position, &pointerIndex);
-
-		}
-
-
-
-
-
-
-		return 0;//minmax;
-	};
-
-
-
-
-
-/*
-	int node::minimax(int depth){
-
-		node* evaluating = new node(&this->current, this->children[0]);
-		int minmax = evaluating->getChildrenEvaluation(depth-1);
-
-		for(pathVector move : this->children){
-
-			evaluating = new node(&this->current, move);
-
-			int eval = evaluating->getChildrenEvaluation(depth-1);
-
-			if(this->current.turn){
-				if(minmax < eval)
-					minmax=eval;
-			}
-			else{
-				if(minmax > eval)
-					minmax = eval;
-			}
-		}
-
-		delete evaluating;
-
-		return minmax;//minmax;
-	};
-*/
 
 
 
 	void node::getChildren(){ // a vector of evaluations from children
 
 //		this->children=
-		this->current.nextPositions(&this->children);//iterates through next positions, need to be created as nodes?
+		this->current->nextPositions(&this->children);//iterates through next positions, need to be created as nodes?
 
 	};
 
 	void node::print(){
-		this->current.print();
+		this->current->print();
 
 		for(pathVector path : this->children){
 			path.print();

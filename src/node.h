@@ -12,34 +12,34 @@
 #include <stdio.h>
 #include <vector>
 
-#include "moveVector.h"
+#include "PositionVector.h"
 #include "pathVector.h"
-#include "piece.h"
+#include "Piece.h"
 #include "board.h"
 #include "node.h"
 
 using namespace std;
 
 
-class node{
+class node{ // purpose is to manage tree searches of board objects
 
 public:
 
-	board current;
+	board* current;
 	vector<pathVector> children;
 
 
-	node(board current);
+	node(board* current);
 
-	node(board* last, pathVector path);
+	node(board* last, pathVector* path);
 
 	~node();
 
-	pathVector getBestMove(int depth);
+//	pathVector getBestMove(int depth);
 
-	int getChildrenEvaluation(int depth);
+	//childVector getChildrenEvaluation(int depth);
 
-	int minimax(int depth);
+	childVector minimax(int depth, int* numBoards);
 
 	void getChildren();
 

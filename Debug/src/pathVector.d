@@ -1,3 +1,3 @@
-src/pathVector.o: ../src/pathVector.cpp ../src/moveVector.h
+src/pathVector.o: ../src/pathVector.cpp ../src/PositionVector.h
 
-../src/moveVector.h:
+../src/PositionVector.h:

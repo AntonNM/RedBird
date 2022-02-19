@@ -4,28 +4,31 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
+../src/MovementVector.cpp \
+../src/Piece.cpp \
+../src/PositionVector.cpp \
 ../src/board.cpp \
 ../src/main.cpp \
-../src/moveVector.cpp \
 ../src/node.cpp \
-../src/pathVector.cpp \
-../src/piece.cpp 
+../src/pathVector.cpp 
 
 OBJS += \
+./src/MovementVector.o \
+./src/Piece.o \
+./src/PositionVector.o \
 ./src/board.o \
 ./src/main.o \
-./src/moveVector.o \
 ./src/node.o \
-./src/pathVector.o \
-./src/piece.o 
+./src/pathVector.o 
 
 CPP_DEPS += \
+./src/MovementVector.d \
+./src/Piece.d \
+./src/PositionVector.d \
 ./src/board.d \
 ./src/main.d \
-./src/moveVector.d \
 ./src/node.d \
-./src/pathVector.d \
-./src/piece.d 
+./src/pathVector.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
